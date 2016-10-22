@@ -26,17 +26,17 @@
 #
 # This file was automatically created for V-REP release V3.2.2 Rev1 on September 5th 2015
 
-import os
 import platform
 import struct
 import sys
 import ctypes as ct
 from vrepConst import *
+import os
 
 #load library
 libsimx = None
 dirpath = os.path.dirname(os.path.abspath(__file__))
-libpath = os.path.join(dirpath, "remoteApi32.dll")
+libpath = os.path.join(dirpath, "..", "..", "dll", "remoteApi32.dll")
 
 try:
     if platform.system() =='cli':

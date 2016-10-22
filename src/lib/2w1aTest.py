@@ -2,10 +2,11 @@
 # thibaut1.royer@epitech.eu
 # It intends to be an example program for the "Two wheels, one arm" educative project.
 
-import vrep
 import math
 import random
 import time
+
+from src.lib import vrep
 
 print ('Start')
 
@@ -27,6 +28,7 @@ if clientID != -1:
     ret2, elbowHandle = vrep.simxGetObjectHandle(clientID, "ElbowMotor", opmode)
     ret3, shoulderHandle = vrep.simxGetObjectHandle(clientID, "ShoulderMotor", opmode)
     ret4, robotHandle = vrep.simxGetObjectHandle(clientID, "2W1A", opmode)
+    print wristHandle, elbowHandle, shoulderHandle, robotHandle
 
     # If handlers are OK, execute three random simulations
     if ret1 == 0 and ret2 == 0 and ret3 == 0:
