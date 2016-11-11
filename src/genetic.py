@@ -1,9 +1,17 @@
+import random
+
+nb_population = 300
+nb_move = 3
+max_generation = 1000
+mutation_rate = 0.01
+
+
 class IIndividual(object):
     def __init__(self):
-        self.genes = None #TODO use an other class for genes
+        self.genes = None
         self.score = None
 
-    def mutate(gene):
+    def mutate(self, gene):
         pass
 
 class IPopulation(object):
@@ -15,7 +23,7 @@ class IEnvironment(object):
         pass
 
 class IOperator(object):
-    def execute(self, environment, population, generationNumber):
+    def execute(self, environment, population, generation_number):
         pass
 
 class AlgoGen(object):
@@ -28,52 +36,77 @@ class AlgoGen(object):
             Mutation(),
             Stop()
         ]
-        self.generationNumber = 0
-        self.stop = False
+        self.generation_number = 0
+        self._stop = False
 
-    def initPopulation(self):
+    def init_population(self):
         for individu in self.population.individus:
             individu.score = self.environment.fitness(individu)
 
-    def executeOperator(self):
+    def execute_operators(self):
         for op in self.operators:
-            op.execute(self.environment, self.population, self.generationNumber)
+            op.execute(self.environment, self.population, self.generation_number)
 
     def start(self):
-        self.initPopulation()
-        while self.stop == False:
-            self.executeOperator()
-            self.generationNumber += 1
+        self.init_population()
+        while self._stop == False:
+            self.execute_operators()
+            self.generation_number += 1
 
     def stop(self):
-        self.stop = True
+        self._stop = True
 
 
 class Selection(IOperator):
-    def execute(self, environment, population, generationNumber):
+    def execute(self, environment, population, generation_number):
         #TODO: implemente Selection
         pass
 
+
 class Mutation(IOperator):
-    def execute(self, environment, population, generationNumber):
-        #TODO: implemente Mutation
-        pass
+    def execute(self, environment, population, generation_number):
+        #fixme: maybe to review
+        for individu in population.individus:
+            if (random.randint(0, 100)) / 100 <= mutation_rate:
+                individu.genes.x = individu.mutate(individu.genes.x)
+
+            if (random.randint(0, 100)) / 100 <= mutation_rate:
+                individu.genes.y = individu.mutate(individu.genes.y)
+
+            if (random.randint(0, 100)) / 100 <= mutation_rate:
+                individu.genes.z = individu.mutate(individu.genes.z)
+
 
 class Crossover(IOperator):
-    def execute(self, environment, population, generationNumber):
+    def execute(self, environment, population, generation_number):
         #TODO: implemente Crossover
         pass
 
+
 class Stop(IOperator):
-    def execute(self, environment, population, generationNumber):
-        #TODO: implemente Stop
-        pass
+    def execute(self, environment, population, generation_number):
+        if generation_number >= max_generation:
+            algo.stop()
 
 class Population(IPopulation):
     def __init__(self, pop):
         IPopulation.__init__(self)
-        self.individus = []
-        #TODO: generate random individu
+        self.individus = self.generate(pop)
+        self.populationNumber = pop
+
+    def generate(self, pop):
+        i = 0
+        inds = []
+        while i < pop:
+            ind = Individual()
+            x = random.randint(0, 360)
+            y = random.randint(0, 360)
+            z = random.randint(0, 360)
+            ind.genes = Genomes(nb_move, x, y, z)
+            inds.append(ind)
+            i += 1
+        return inds
+
 
 class Environment(IEnvironment):
     def __init__(self):
@@ -84,15 +117,24 @@ class Environment(IEnvironment):
         #TODO: implemente Fitness
         pass
 
+
+class Genomes(object):
+    def __init__(self, n, x, y, z):
+        self.n = n
+        self.x = x
+        self.y = y
+        self.z = z
+
+
 class Individual(IIndividual):
     def __init__(self):
         IIndividual.__init__(self)
-        self.genes = None #TODO use an other class for genes
+        self.genes = None
         self.score = None
 
+    def mutate(self, gene):
+        #TODO: mutation
+        pass
 
-
-
-algo = AlgoGen(Environment(), Population(400))
-
+algo = AlgoGen(Environment(), Population(nb_population))
 algo.start()
