@@ -1,6 +1,7 @@
 import random
 
 nb_population = 300
+nb_population_to_keep = 200
 nb_move = 3
 max_generation = 1000
 mutation_rate = 0.01
@@ -59,8 +60,22 @@ class AlgoGen(object):
 
 class Selection(IOperator):
     def execute(self, environment, population, generation_number):
-        #TODO: implemente Selection
-        pass
+        fitnesses = []
+        for ind in population.individus:
+            fitnesses.append(ind.score)
+        total_fitness = float(sum(fitnesses))
+        rel_fitness = [f/total_fitness for f in fitnesses]
+        # Generate probability intervals for each individual
+        probs = [sum(rel_fitness[:i+1]) for i in range(len(rel_fitness))]
+        # Draw new population
+        new_population = []
+        for n in xrange(nb_population_to_keep):
+            r = random.random()
+            for (i, individual) in enumerate(population.individus):
+                if r <= probs[i]:
+                    new_population.append(individual)
+                    break
+        population.individus = new_population
 
 
 class Mutation(IOperator):
