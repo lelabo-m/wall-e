@@ -10,13 +10,13 @@ class Environment(IEnvironment):
     @classmethod
     def goal(cls, population):
         candidate_solution = population.best()
-        if candidate_solution.fitness() >= stopping_criterion:
+        if candidate_solution.fitness >= stopping_criterion:
             return True
         return False
 
     @classmethod
     def fitness(cls, individual):
-        individual.fitness = random.randint(0, 100)
+        individual.fitness = float(random.randint(0, 100))
         # TODO: implemente Fitness
         pass
 

@@ -6,6 +6,6 @@ from genetic_algorithm.parameters import *
 
 GeneLibrary.init()
 algo = GeneticAlgorithm(Population(population_size), Environment())
-algo.start()
+algo.start(verbose=True)
 best_individual = algo.result()
 print best_individual
