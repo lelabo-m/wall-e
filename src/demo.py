@@ -33,6 +33,7 @@ for i in range(0, 3):
     # client.display_activation(False)
     robot.init_stream()
     start = robot.position
+    # client.display_activation(False)
 
     # Make the robot move randomly five times
     for j in range(0, 20):

@@ -75,7 +75,7 @@ class Robot(object):
     def wait(self):
 
         i = 0
-        while i < 50:
+        while i < 40:
             vrep.simxSynchronousTrigger(self.client.id)
             i += 1
 
