@@ -1,16 +1,31 @@
+from src.lib import vrep
+
+
+def is_same(old, new):
+    return abs(old - new) > 0.01
+
+
 class Robot(object):
 
     @property
     def position(self):
         return self.client.get_object_position(self.__robot)[1]
 
+    @position.setter
+    def position(self, position):
+        self.client.get_object_position(self.__robot, position)
+
     @property
     def orientation(self):
         return self.client.get_object_orientation(self.__robot)[1]
 
+    @orientation.setter
+    def orientation(self, orientation):
+        self.client.set_object_orientation(self.__robot, orientation)
+
     @property
     def elbow(self):
-        return self.client.get_motor_position(self.__elbow)
+        return self.client.get_motor_position(self.__elbow)[1]
 
     @elbow.setter
     def elbow(self, value):
@@ -18,7 +33,7 @@ class Robot(object):
 
     @property
     def wrist(self):
-        return self.client.get_motor_position(self.__wrist)
+        return self.client.get_motor_position(self.__wrist)[1]
 
     @wrist.setter
     def wrist(self, value):
@@ -26,7 +41,7 @@ class Robot(object):
 
     @property
     def shoulder(self):
-        return self.client.get_motor_position(self.__shoulder)
+        return self.client.get_motor_position(self.__shoulder)[1]
 
     @shoulder.setter
     def shoulder(self, value):
@@ -53,6 +68,16 @@ class Robot(object):
         self.__wrist = handles[2]
         self.__shoulder = handles[3]
         return True
+
+    def pause(self, state):
+        vrep.simxPauseCommunication(self.client.id, state)
+
+    def wait(self):
+
+        i = 0
+        while i < 50:
+            vrep.simxSynchronousTrigger(self.client.id)
+            i += 1
 
     def init_stream(self):
         self.client.get_object_position(self.__robot, buffer=False)

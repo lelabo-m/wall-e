@@ -50,6 +50,7 @@ class Genes:
         return Genes(random.randint(0, 360))
 
     def mutate(self):
+        print "MUTATE"
         bits = [int(bit) for bit in GeneLibrary.int_to_bits(self.value)]
         index = random.randint(0, 8)
         bits[index] = int(not bits[index])

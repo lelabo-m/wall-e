@@ -3,6 +3,7 @@ from parameters import *
 from genomes import *
 from operator import attrgetter
 from utils import rand_probability
+import copy
 
 
 class Movement:
@@ -14,19 +15,19 @@ class Movement:
                 self.genes.append(Genes.random())
 
     def __str__(self):
-        return "Move(x={},y={},z={})".format(self.x().value, self.y().value, self.z().value)
+        return "Move(x={},y={},z={})".format(self.x(), self.y(), self.z())
 
     def __repr__(self):
         return str(self)
 
     def x(self):
-        return self.genes[0]
+        return self.genes[0].value
 
     def y(self):
-        return self.genes[1]
+        return self.genes[1].value
 
     def z(self):
-        return self.genes[2]
+        return self.genes[2].value
 
     def mutate(self):
         for gene in self.genes:
@@ -51,13 +52,16 @@ class Individual(IIndividual):
         IIndividual.__init__(self)
         if not empty:
             self.moves = [Movement() for x in range(nb_move)]
-        self.fitness = 0
+        self.fitness = 0.0
 
     def __str__(self):
         return "Individual(fitness={}, moves={})".format(self.fitness, ",".join([str(move) for move in self.moves]))
 
     def __repr__(self):
         return str(self)
+
+    def copy(self):
+        return copy.deepcopy(self)
 
     def mutate(self):
         for move in self.moves:
@@ -93,4 +97,4 @@ class Population(IPopulation):
         return [individual.fitness for individual in self.individuals]
 
     def best(self):
-        return max(self.individuals, key=attrgetter('fitness'))
+        return max(self.individuals, key=attrgetter('fitness')).copy()

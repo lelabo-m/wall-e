@@ -7,7 +7,6 @@ from utils import rand_probability
 class Selection(IOperator):
 
     def execute(self, environment, population, generation):
-        environment.evaluate(population)
         best_solution = population.best()
         fitnesses = population.fitnesses()
         total_fitness = sum(fitnesses)
@@ -22,7 +21,8 @@ class Selection(IOperator):
                 if r <= probs[i]:
                     new_population.append(individual)
                     break
-        new_population += [best_solution] * elite_copy
+        for x in range(elite_copy):
+            new_population.append(best_solution.copy())
         population.individuals = new_population
         return False
 
@@ -46,15 +46,13 @@ class Crossover(IOperator):
 
             if rand_probability() <= crossover_rate:
                 new_individuals += a.crossover(b)
-            else:
-                new_individuals += [a, b]
         population.individuals += new_individuals
         return False
 
 
 class Stop(IOperator):
     def execute(self, environment, population, generation):
-        if generation >= max_generation:
+        if generation + 1 >= max_generation:
             return True
         if environment.goal(population):
             return True

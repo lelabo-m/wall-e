@@ -1,6 +1,5 @@
 import time
-from lib import vrep
-
+from src.lib import vrep
 
 class BaseClient(object):
 
@@ -31,6 +30,9 @@ class BaseClient(object):
         self.id = vrep.simxStart(self.address, self.port, True, True, 5000, 5)
         self.mode = vrep.simx_opmode_oneshot_wait
 
+    def synchronous_mode(self):
+        vrep.simxSynchronous(self.id, True)
+
     def is_connected(self):
         return self.id != -1
 
@@ -49,15 +51,19 @@ class RobotClient(BaseClient):
 
     def __init__(self, address='127.0.0.1', port=19997):
         BaseClient.__init__(self, address, port)
+        self.first = 0
+
+    def display_activation(self, state):
+        vrep.simxSetBooleanParameter(self.id, vrep.sim_boolparam_display_enabled, state, vrep.simx_opmode_oneshot)
 
     def get_object(self, name):
         return vrep.simxGetObjectHandle(self.id, name, self.mode)
 
     def set_motor_position(self, handle, value):
-        vrep.simxSetJointTargetPosition(self.id, handle, value, self.mode)
+        vrep.simxSetJointTargetPosition(self.id, handle, value, vrep.simx_opmode_streaming)
 
     def get_motor_position(self, handle):
-        return vrep.simxGetJointPosition(self.id, handle, self.mode)
+        return vrep.simxGetJointPosition(self.id, handle, vrep.simx_opmode_oneshot)
 
     def get_object_position(self, handle, buffer=True):
         if buffer:
@@ -68,3 +74,9 @@ class RobotClient(BaseClient):
         if buffer:
             return vrep.simxGetObjectOrientation(self.id, handle, -1, vrep.simx_opmode_buffer)
         return vrep.simxGetObjectOrientation(self.id, handle, -1, vrep.simx_opmode_streaming)
+
+    def set_object_position(self, handle, position):
+        vrep.simxSetObjectPosition(self.id, handle, -1, position, vrep.simx_opmode_streaming)
+
+    def set_object_orientation(self, handle, orientation):
+        vrep.simxSetObjectOrientation(self.id, handle, -1, orientation, vrep.simx_opmode_streaming)

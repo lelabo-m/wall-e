@@ -1,13 +1,13 @@
-population_size = 300
-population_to_keep = 100
+population_size = 100
+population_to_keep = 40
 
-max_generation = 1000
+max_generation = 100
 stopping_criterion = 150
 
-nb_move = 3
+nb_move = 8
 
 mutation_rate = 0.01
 crossover_rate = 0.8
 mixing_ratio = 0.34
 
-elite_copy = 5
+elite_copy = 4

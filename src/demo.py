@@ -1,9 +1,12 @@
 import math
 import random
 import time
-from client import RobotClient
-from simulation import Simulation
-from robot import Robot
+
+from src.lib import vrep
+from src.simulation.simulation import Simulation
+from src.simulation.client import RobotClient
+from src.simulation.robot import Robot
+from src.genetic_algorithm.utils import euclidean_distance
 
 print ('Start')
 
@@ -13,61 +16,46 @@ if not client.is_connected():
     print "Connection failed!"
     exit(1)
 
+print client.id
 robot = Robot(client)
 if not robot.load():
     print "Robot initialization failed!"
     exit(1)
 
+client.synchronous_mode()
+
 random.seed()
 for i in range(0, 3):
+    # Wait until the robot is settled to the default position
+    print "----- Simulation started -----"
     simulation = Simulation(client)
     simulation.start()
+    # client.display_activation(False)
     robot.init_stream()
-    print "----- Simulation started -----"
-
-    # Start getting the robot position
-    robotPos = robot.position
-    print "2w1a position: (x = " + str(robotPos[0]) + ", y = " + str(robotPos[1]) + ")"
-
-    # Start getting the robot orientation
-    robotOrient = robot.orientation
-    print "2w1a orientation: (x = " + str(robotOrient[0]) + ", y = " + str(robotOrient[1]) +\
-          ", z = " + str(robotOrient[2]) + ")"
+    start = robot.position
 
     # Make the robot move randomly five times
-    for j in range(0, 5):
+    for j in range(0, 20):
         # Generating random positions for the motors
         awrist = random.randint(0, 300)
         aelbow = random.randint(0, 300)
         ashoulder = random.randint(0, 300)
 
-        # The control functions use Radians to determine the target position.
-        print "Motors target positions: " + str(ashoulder) + " " + str(aelbow) + " " + str(awrist)
+        robot.pause(True)
         robot.wrist = math.radians(awrist)
         robot.elbow = math.radians(aelbow)
         robot.shoulder = math.radians(ashoulder)
+        robot.pause(False)
+        robot.wait()
 
-        # Wait in order to let the motors finish their movements
-        # Tip: there must be a more efficient way to do it...
-        time.sleep(5)
+    end = robot.position
+    print
+    print euclidean_distance(start, end)
 
-        # Get the motors effective positions after the movement sequence
-        pwrist = robot.wrist
-        pelbow = robot.elbow
-        pshoulder = robot.shoulder
-        print "Motors reached positions: " + str(ashoulder) + " " + str(aelbow) + " " + str(awrist)
-
-        # Get the robot position after the movement sequence
-        robotPos = robot.position
-        print "2w1a position: (x = " + str(robotPos[0]) + ", y = " + str(robotPos[1]) + ")"
-        # Get the robot orientation after the movement sequence
-        robotOrient = robot.orientation
-        print "2w1a orientation: (x = " + str(robotOrient[0]) + ", y = " + str(robotOrient[1]) +\
-              ", z = " + str(robotOrient[2]) + ")"
+    print "----- Simulation ended -----"
 
     simulation.stop()
-    print "----- Simulation ended -----"
-    time.sleep(1)
+    time.sleep(0.2)
 
 client.disconnect()
 print ('End')

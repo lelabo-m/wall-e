@@ -36,7 +36,7 @@ import os
 #load library
 libsimx = None
 dirpath = os.path.dirname(os.path.abspath(__file__))
-libpath = os.path.join(dirpath, "..", "..", "dll", "remoteApi32.dll")
+libpath = os.path.join(dirpath, "..", "..", "dll", "remoteApi64.dll")
 
 try:
     if platform.system() =='cli':
